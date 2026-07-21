@@ -1,0 +1,66 @@
+############################
+# Spring Boot / Maven
+############################
+
+Backend-Java/target/
+Backend-Java/.classpath
+Backend-Java/.project
+Backend-Java/.settings/
+Backend-Java/.factorypath
+Backend-Java/.apt_generated/
+Backend-Java/.springBeans
+Backend-Java/.sts4-cache
+
+############################
+# IntelliJ
+############################
+
+Backend-Java/.idea/
+Backend-Java/*.iml
+
+############################
+# Logs
+############################
+
+Backend-Java/*.log
+
+############################
+# React / Vite
+############################
+
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.vite/
+
+############################
+# Environment Variables
+############################
+
+Frontend/.env
+Frontend/.env.*
+Backend-Java/.env
+
+############################
+# VS Code
+############################
+
+.vscode/
+
+############################
+# OS Files
+############################
+
+.DS_Store
+Thumbs.db
+
+############################
+# Uploads
+############################
+
+Backend-Java/src/main/resources/uploads/
+
+############################
+# Generated files
+############################
+
+*.class
