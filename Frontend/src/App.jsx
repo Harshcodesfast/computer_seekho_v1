@@ -20,7 +20,7 @@ function App() {
   return (
     <div>
 
-      <h1>Computer Seekho</h1>
+      <h1>Computer Seekho v1</h1>
 
       <h2>{message}</h2>
 
