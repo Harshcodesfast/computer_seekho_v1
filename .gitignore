@@ -69,8 +69,21 @@ Backend-Java/src/main/resources/uploads/
 .DS_Store
 Thumbs.db
 
+<<<<<<< HEAD
+############################
+# Uploads
+############################
+
+Backend-Java/src/main/resources/uploads/
+
+############################
+# Generated files
+############################
+src.
+=======
 #################################################
 # Compiled Files
 #################################################
 
+>>>>>>> c4a75f795e0f3e13a24aedc8798ff4123e5e081f
 *.class
