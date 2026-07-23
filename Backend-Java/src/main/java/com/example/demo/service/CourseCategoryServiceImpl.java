@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.CourseCategory;
 import com.example.demo.repository.CourseCategoryRepository;
+import com.example.demo.service.intrf.CourseCategoryService;
 
 @Service
 public class CourseCategoryServiceImpl implements CourseCategoryService {

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.Enrollment;
 import com.example.demo.repository.EnrollmentRepository;
+import com.example.demo.service.intrf.EnrollmentService;
 
 @Service
 public class EnrollmentServiceImpl implements EnrollmentService {
