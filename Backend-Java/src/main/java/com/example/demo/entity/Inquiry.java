@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "inquiries")
@@ -27,6 +28,14 @@ public class Inquiry {
     @JoinColumn(name = "staff_id")
     private Staff staff;
 
+    @OneToMany(mappedBy = "inquiry", fetch = FetchType.LAZY)
+    private List<Student> students;
+    
+    @OneToMany(mappedBy = "inquiry", fetch = FetchType.LAZY)
+    private List<FollowUp> followUps;
+    
+    @OneToOne(mappedBy = "inquiry", fetch = FetchType.LAZY)
+    private Student student;
     
     @Column(name = "enquirer_name", nullable = false, length = 150)
     private String enquirerName;

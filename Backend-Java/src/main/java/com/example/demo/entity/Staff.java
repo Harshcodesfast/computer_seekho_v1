@@ -1,14 +1,17 @@
 package com.example.demo.entity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +26,14 @@ public class Staff {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "staff_id")
     private Integer staffId;
+    
+    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
+    private List<FollowUp> followUps;
+    
+   
+
+    @OneToMany(mappedBy = "staff")
+    private List<Inquiry> inquiries;
 
     @Column(nullable = false, length = 150)
     private String name;

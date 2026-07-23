@@ -34,13 +34,9 @@ public class FollowUp {
     @Column(name = "next_followup")
     private LocalDate nextFollowup;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private FollowUpStatus status = FollowUpStatus.Pending;
+    @Column(name = "special_instructions", columnDefinition = "TEXT")
+    private String specialInstructions;
 
-    public enum FollowUpStatus {
-        Pending,
-        Done,
-        No_Response
-    }
+    @Column(name = "reason_for_closure", columnDefinition = "TEXT")
+    private String reasonForClosure;
 }
