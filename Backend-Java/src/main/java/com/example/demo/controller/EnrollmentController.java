@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entity.Enrollment;
-import com.example.demo.service.EnrollmentServiceImpl;
+import com.example.demo.service.intrf.EnrollmentService;
 
 @RestController
 @RequestMapping("/enrollments")
@@ -14,7 +14,7 @@ import com.example.demo.service.EnrollmentServiceImpl;
 public class EnrollmentController {
 
     @Autowired
-    private EnrollmentServiceImpl enrollmentService;
+    private EnrollmentService enrollmentService;
 
     @PostMapping
     public Enrollment saveEnrollment(@RequestBody Enrollment enrollment) {
