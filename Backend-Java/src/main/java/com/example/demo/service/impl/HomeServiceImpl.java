@@ -1,90 +1,106 @@
 package com.example.demo.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.dto.response.BannerResponse;
-import com.example.demo.dto.response.CourseResponse;
+import com.example.demo.dto.request.EnquiryRequest;
+import com.example.demo.dto.response.EnquiryResponse;
 import com.example.demo.dto.response.HomeResponse;
-import com.example.demo.entity.Banner;
 import com.example.demo.entity.Course;
-import com.example.demo.repository.BannerRepository;
+import com.example.demo.entity.HeroContent;
+import com.example.demo.entity.Inquiry;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.mapper.HomeMapper;
 import com.example.demo.repository.CourseRepository;
-import com.example.demo.service.intf.HomeService;
-
-import com.example.demo.dto.response.TestimonialResponse;
-import com.example.demo.entity.Testimonial;
+import com.example.demo.repository.HeroContentRepository;
+import com.example.demo.repository.HeroHighlightRepository;
+import com.example.demo.repository.InquiryRepository;
+import com.example.demo.repository.NewsEventRepository;
 import com.example.demo.repository.TestimonialRepository;
 
 @Service
-public class HomeServiceImpl implements HomeService {
+public class HomeServiceImpl implements com.example.demo.service.intrf.HomeService {
 
-	@Autowired
-	private BannerRepository bannerRepository;
+    private final NewsEventRepository newsEventRepository;
+    private final HeroContentRepository heroContentRepository;
+    private final HeroHighlightRepository heroHighlightRepository;
+    private final CourseRepository courseRepository;
+    private final TestimonialRepository testimonialRepository;
+    private final InquiryRepository inquiryRepository;
+    private final HomeMapper homeMapper;
 
-	@Autowired
-	private CourseRepository courseRepository;
+    public HomeServiceImpl(
+            NewsEventRepository newsEventRepository,
+            HeroContentRepository heroContentRepository,
+            HeroHighlightRepository heroHighlightRepository,
+            CourseRepository courseRepository,
+            TestimonialRepository testimonialRepository,
+            InquiryRepository inquiryRepository,
+            HomeMapper homeMapper) {
+        this.newsEventRepository = newsEventRepository;
+        this.heroContentRepository = heroContentRepository;
+        this.heroHighlightRepository = heroHighlightRepository;
+        this.courseRepository = courseRepository;
+        this.testimonialRepository = testimonialRepository;
+        this.inquiryRepository = inquiryRepository;
+        this.homeMapper = homeMapper;
+    }
 
-	@Autowired
-	private TestimonialRepository testimonialRepository;
+    @Override
+    @Transactional(readOnly = true)
+    public HomeResponse getHomePage() {
+        HomeResponse response = new HomeResponse();
 
-	@Override
-	public HomeResponse getHomePage() {
+        response.setAnnouncements(
+                homeMapper.toAnnouncementResponses(
+                        newsEventRepository.findByIsActiveTrueOrderByCreatedAtDesc()));
 
-		HomeResponse response = new HomeResponse();
+        HeroContent heroContent = heroContentRepository
+                .findFirstByIsActiveTrueOrderByHeroIdAsc()
+                .orElseGet(this::defaultHeroContent);
 
-		// ---------------- Banner ----------------
-		List<Banner> banners = bannerRepository.findByIsActiveTrueOrderByDisplayOrderAsc();
+        response.setHero(homeMapper.toHeroResponse(
+                heroContent,
+                heroHighlightRepository.findByIsActiveTrueOrderByDisplayOrderAsc()));
 
-		if (!banners.isEmpty()) {
+        response.setCourses(
+                homeMapper.toCourseResponses(
+                        courseRepository.findActiveCoursesWithCategory()));
 
-			Banner banner = banners.get(0);
+        response.setTestimonials(
+                homeMapper.toTestimonialResponses(
+                        testimonialRepository.findByIsApprovedTrue()));
 
-			BannerResponse bannerResponse = new BannerResponse();
-			bannerResponse.setTitle(banner.getTitle());
-			bannerResponse.setSubtitle("");
-			bannerResponse.setImageUrl(banner.getImageUrl());
+        return response;
+    }
 
-			response.setBanner(bannerResponse);
-		}
+    @Override
+    @Transactional
+    public EnquiryResponse submitEnquiry(EnquiryRequest request) {
+        Course course = courseRepository.findById(request.getCourseId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Course not found with id: " + request.getCourseId()));
 
-		// ---------------- Courses ----------------
-		List<Course> courses = courseRepository.findByIsActiveTrue();
+        Inquiry inquiry = new Inquiry();
+        inquiry.setEnquirerName(request.getEnquirerName());
+        inquiry.setEmail(request.getEmail());
+        inquiry.setPhone(request.getPhone());
+        inquiry.setMessage(request.getMessage());
+        inquiry.setCourse(course);
+        inquiry.setSource("website");
 
-		List<CourseResponse> courseResponseList = new ArrayList<>();
+        Inquiry saved = inquiryRepository.save(inquiry);
 
-		for (Course course : courses) {
+        return new EnquiryResponse(
+                saved.getInquiryId(),
+                "Enquiry submitted successfully. Our team will contact you soon.");
+    }
 
-			CourseResponse courseResponse = new CourseResponse();
-
-			courseResponse.setCourseId(course.getCourseId());
-			courseResponse.setName(course.getName());
-
-			courseResponseList.add(courseResponse);
-		}
-
-		response.setCourses(courseResponseList);
-		List<Testimonial> testimonials = testimonialRepository.findByIsApprovedTrue();
-
-		List<TestimonialResponse> testimonialResponseList = new ArrayList<>();
-
-		for (Testimonial testimonial : testimonials) {
-
-			TestimonialResponse testimonialResponse = new TestimonialResponse();
-
-			testimonialResponse.setName(testimonial.getName());
-			testimonialResponse.setContent(testimonial.getContent());
-			testimonialResponse.setRating(testimonial.getRating());
-			testimonialResponse.setPhotoUrl(testimonial.getPhotoUrl());
-
-			testimonialResponseList.add(testimonialResponse);
-		}
-
-		response.setTestimonials(testimonialResponseList);
-
-		return response;
-	}
+    private HeroContent defaultHeroContent() {
+        HeroContent heroContent = new HeroContent();
+        heroContent.setTitle("Empowering Careers Through IT Excellence");
+        heroContent.setSubtitle(
+                "C-DAC ACTS authorized training center in Mumbai — courses for all age groups from 3+ to senior citizens");
+        return heroContent;
+    }
 }

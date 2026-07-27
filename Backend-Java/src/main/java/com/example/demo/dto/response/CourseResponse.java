@@ -1,27 +1,20 @@
 package com.example.demo.dto.response;
 
+import java.math.BigDecimal;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class CourseResponse {
 
     private Integer courseId;
-
     private String name;
-
-    public CourseResponse() {
-    }
-
-    public Integer getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(Integer courseId) {
-        this.courseId = courseId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    private String description;
+    private String duration;
+    private BigDecimal fees;
+    private String coverPhoto;
+    private String categoryName;
+    private String level;
 }
